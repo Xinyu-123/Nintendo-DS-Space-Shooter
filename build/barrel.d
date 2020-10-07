@@ -1,1 +1,0 @@
-barrel.o: barrel.s

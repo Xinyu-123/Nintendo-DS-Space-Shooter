@@ -1,1 +1,0 @@
-starfield.o: starfield.s
