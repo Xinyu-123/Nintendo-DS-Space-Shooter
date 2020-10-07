@@ -179,16 +179,11 @@ int main(void){
 		//Prints the score
 		iprintf("\x1b[10;0HScore = %d", score);
 
-		//Sets and updates the background
-		
+		//Sets the new scroll of the background and updates the background
 		bgSetScroll(bg3, scrollX, scrollY);
 		bgUpdate();
 
-		//-----------------------------------------------------------------
-		// Set oam attributes, notice the only difference is in the sprite 
-		// graphics memory pointer argument.  The man only has one pointer
-		// while the women has an array of pointers
-		//-----------------------------------------------------------------
+		//Display the two sprites on the main screen. Figuring out how to store both palettes separately took me a while.
 		oamSet(&oamMain, 0, ship.x, ship.y, 1, 0, SpriteSize_32x32, SpriteColorFormat_256Color, 
 			gfx, 0, false, false, false, false, false);
 
@@ -208,10 +203,12 @@ int main(void){
 	return 0;
 }
 
+//Generate a random Y position within the screen and set it to the barrel
 int generateBarrelY(){
 	return rand() % 180;
 }
 
+//Check to see a collision between the barrel and ship
 bool checkCollision(Ship* ship, Barrel* barrel){
 	int dy = ship->y - barrel->y;
 
