@@ -1,18 +1,9 @@
 main.o: D\:/devkitPro/projects/Monkey_Fracas_Jr/source/main.cpp \
- D\:/devkitPro/libnds/include/gl2d.h \
- D\:/devkitPro/libnds/include/nds/arm9/videoGL.h \
- D\:/devkitPro/libnds/include/nds/dma.h \
- D\:/devkitPro/libnds/include/nds/ndstypes.h \
- D\:/devkitPro/libnds/include/nds/arm9/sassert.h \
- D\:/devkitPro/libnds/include/nds/arm9/video.h \
- D\:/devkitPro/libnds/include/nds/arm9/cache.h \
- D\:/devkitPro/libnds/include/nds/arm9/trig_lut.h \
- D\:/devkitPro/libnds/include/nds/arm9/math.h \
- D\:/devkitPro/libnds/include/nds/arm9/dynamicArray.h \
  D\:/devkitPro/libnds/include/nds.h \
  D\:/devkitPro/libnds/include/nds/libversion.h \
  D\:/devkitPro/libnds/include/nds/ndstypes.h \
  D\:/devkitPro/libnds/include/nds/bios.h \
+ D\:/devkitPro/libnds/include/nds/ndstypes.h \
  D\:/devkitPro/libnds/include/nds/card.h \
  D\:/devkitPro/libnds/include/nds/ndstypes.h \
  D\:/devkitPro/libnds/include/nds/debug.h \
@@ -30,8 +21,16 @@ main.o: D\:/devkitPro/projects/Monkey_Fracas_Jr/source/main.cpp \
  D\:/devkitPro/libnds/include/nds/arm9/dynamicArray.h \
  D\:/devkitPro/libnds/include/nds/arm9/linkedlist.h \
  D\:/devkitPro/libnds/include/nds/arm9/background.h \
+ D\:/devkitPro/libnds/include/nds/arm9/video.h \
+ D\:/devkitPro/libnds/include/nds/arm9/sassert.h \
  D\:/devkitPro/libnds/include/nds/memory.h \
+ D\:/devkitPro/libnds/include/nds/dma.h \
  D\:/devkitPro/libnds/include/nds/arm9/boxtest.h \
+ D\:/devkitPro/libnds/include/nds/arm9/videoGL.h \
+ D\:/devkitPro/libnds/include/nds/arm9/cache.h \
+ D\:/devkitPro/libnds/include/nds/arm9/trig_lut.h \
+ D\:/devkitPro/libnds/include/nds/arm9/math.h \
+ D\:/devkitPro/libnds/include/nds/arm9/dynamicArray.h \
  D\:/devkitPro/libnds/include/nds/arm9/cache.h \
  D\:/devkitPro/libnds/include/nds/arm9/console.h \
  D\:/devkitPro/libnds/include/nds/arm9/background.h \
@@ -59,21 +58,20 @@ main.o: D\:/devkitPro/projects/Monkey_Fracas_Jr/source/main.cpp \
  D\:/devkitPro/libnds/include/nds/arm9/trig_lut.h \
  D\:/devkitPro/libnds/include/nds/arm9/video.h \
  D\:/devkitPro/libnds/include/nds/arm9/videoGL.h \
- D\:/devkitPro/libnds/include/nds/arm9/nand.h
-D\:/devkitPro/libnds/include/gl2d.h:
-D\:/devkitPro/libnds/include/nds/arm9/videoGL.h:
-D\:/devkitPro/libnds/include/nds/dma.h:
-D\:/devkitPro/libnds/include/nds/ndstypes.h:
-D\:/devkitPro/libnds/include/nds/arm9/sassert.h:
-D\:/devkitPro/libnds/include/nds/arm9/video.h:
-D\:/devkitPro/libnds/include/nds/arm9/cache.h:
-D\:/devkitPro/libnds/include/nds/arm9/trig_lut.h:
-D\:/devkitPro/libnds/include/nds/arm9/math.h:
-D\:/devkitPro/libnds/include/nds/arm9/dynamicArray.h:
+ D\:/devkitPro/libnds/include/nds/arm9/nand.h \
+ D\:/devkitPro/libnds/include/maxmod9.h \
+ D\:/devkitPro/libnds/include/mm_types.h \
+ D\:/devkitPro/libnds/include/nds/arm9/console.h \
+ D\:/devkitPro/projects/Monkey_Fracas_Jr/build/soundbank.h \
+ D\:/devkitPro/projects/Monkey_Fracas_Jr/build/soundbank_bin.h \
+ D\:/devkitPro/projects/Monkey_Fracas_Jr/build/ship.h \
+ D\:/devkitPro/projects/Monkey_Fracas_Jr/build/barrel.h \
+ D\:/devkitPro/projects/Monkey_Fracas_Jr/build/starfield.h
 D\:/devkitPro/libnds/include/nds.h:
 D\:/devkitPro/libnds/include/nds/libversion.h:
 D\:/devkitPro/libnds/include/nds/ndstypes.h:
 D\:/devkitPro/libnds/include/nds/bios.h:
+D\:/devkitPro/libnds/include/nds/ndstypes.h:
 D\:/devkitPro/libnds/include/nds/card.h:
 D\:/devkitPro/libnds/include/nds/ndstypes.h:
 D\:/devkitPro/libnds/include/nds/debug.h:
@@ -91,8 +89,16 @@ D\:/devkitPro/libnds/include/nds/sha1.h:
 D\:/devkitPro/libnds/include/nds/arm9/dynamicArray.h:
 D\:/devkitPro/libnds/include/nds/arm9/linkedlist.h:
 D\:/devkitPro/libnds/include/nds/arm9/background.h:
+D\:/devkitPro/libnds/include/nds/arm9/video.h:
+D\:/devkitPro/libnds/include/nds/arm9/sassert.h:
 D\:/devkitPro/libnds/include/nds/memory.h:
+D\:/devkitPro/libnds/include/nds/dma.h:
 D\:/devkitPro/libnds/include/nds/arm9/boxtest.h:
+D\:/devkitPro/libnds/include/nds/arm9/videoGL.h:
+D\:/devkitPro/libnds/include/nds/arm9/cache.h:
+D\:/devkitPro/libnds/include/nds/arm9/trig_lut.h:
+D\:/devkitPro/libnds/include/nds/arm9/math.h:
+D\:/devkitPro/libnds/include/nds/arm9/dynamicArray.h:
 D\:/devkitPro/libnds/include/nds/arm9/cache.h:
 D\:/devkitPro/libnds/include/nds/arm9/console.h:
 D\:/devkitPro/libnds/include/nds/arm9/background.h:
@@ -121,3 +127,11 @@ D\:/devkitPro/libnds/include/nds/arm9/trig_lut.h:
 D\:/devkitPro/libnds/include/nds/arm9/video.h:
 D\:/devkitPro/libnds/include/nds/arm9/videoGL.h:
 D\:/devkitPro/libnds/include/nds/arm9/nand.h:
+D\:/devkitPro/libnds/include/maxmod9.h:
+D\:/devkitPro/libnds/include/mm_types.h:
+D\:/devkitPro/libnds/include/nds/arm9/console.h:
+D\:/devkitPro/projects/Monkey_Fracas_Jr/build/soundbank.h:
+D\:/devkitPro/projects/Monkey_Fracas_Jr/build/soundbank_bin.h:
+D\:/devkitPro/projects/Monkey_Fracas_Jr/build/ship.h:
+D\:/devkitPro/projects/Monkey_Fracas_Jr/build/barrel.h:
+D\:/devkitPro/projects/Monkey_Fracas_Jr/build/starfield.h:
