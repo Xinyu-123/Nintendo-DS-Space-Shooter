@@ -2,6 +2,8 @@
 #include <nds.h>
 #include <maxmod9.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <nds/registers_alt.h>
 
 #include <nds/arm9/console.h> //basic print funcionality
 #include <nds/arm9/trig_lut.h>
@@ -21,6 +23,12 @@
 //Using time.h to help with the random function for the y placement of the barrel
 #include <time.h>
 
+#define NUM_STARS 40
+#define UPLEFT (KEY_UP | KEY_LEFT)
+#define UPRIGHT (KEY_UP | KEY_RIGHT)
+#define DOWNLEFT (KEY_DOWN | KEY_LEFT)
+#define DOWNRIGHT (KEY_DOWN | KEY_RIGHT)
+
 //This stores the location of the player ship
 typedef struct 
 {
@@ -35,37 +43,104 @@ typedef struct
 	int y;
 }Barrel;
 
+typedef struct 
+{
+	int x;
+	int y;
+	int speed;
+	unsigned short color;
+ 
+}Star;
+ 
+
 // Function Prototypes
 int generateBarrelY();
 bool checkCollision(Ship* ship, Barrel* barrel);
+
+
+// Function Prototypes
+void setStar(Star* star, int xSpeed, int ySpeed, int xStart, int yStart);
+void MoveStar(Star* star);
+void ClearScreen(u16* vidBuff);
+void InitStars(void);
+void DrawStar(Star* star, u16* vidBuff);
+void EraseStar(Star* star, u16* vidBuff);
+
+ 
+Star stars[NUM_STARS];
+int lastKey;
+ 
+void MoveStar(Star* star)
+{
+	setStar(star, -star->speed, 0, SCREEN_WIDTH, rand() % SCREEN_HEIGHT);
+}
+
+void setStar(Star* star, int xSpeed, int ySpeed, int xStart, int yStart)
+{
+	star->x += xSpeed;
+	star->y += ySpeed;
+ 
+	if(star->y < 0 || star->y > SCREEN_HEIGHT)
+	{
+		star->x = xStart;
+		star->y = yStart;
+		star->speed = rand() % 4 + 1;	
+	}
+	else if(star->x < 0 || star->x > SCREEN_WIDTH)
+	{
+		star->x = xStart;
+		star->y = yStart;
+		star->speed = rand() % 4 + 1;	
+	}
+}
+ 
+void ClearScreen(u16* vidBuff)
+{
+     int i;    
+     for(i = 0; i < 256 * 192; i++)
+           vidBuff[i] = RGB15(0,0,0);
+}
+ 
+void InitStars(void)
+{
+	int i;
+	for(i = 0; i < NUM_STARS; i++)
+	{
+		stars[i].color = rand(); // both color & rand() are a 16bit value
+		stars[i].x = rand() % 256;
+		stars[i].y = rand() % 192;
+		stars[i].speed = rand() % 4 + 1;
+	}
+}
+void DrawStar(Star* star, u16* vidBuff)
+{
+	vidBuff[star->x + star->y * SCREEN_WIDTH] = star->color;
+}
+ 
+void EraseStar(Star* star, u16* vidBuff)
+{
+	vidBuff[star->x + star->y * SCREEN_WIDTH] = RGB15(0,0,0);
+}
 
 int main(void){
 	//Initialize the player and opening barrel
 	Ship ship = {0, 0};
 	Barrel barrel = {256, 0};
+	Barrel barrel2 = {256, 0};
+	Barrel barrel3 = {256, 0};
+
 
 	//The score
 	int score = 0;
 
+	//pointer to virtual memory 0x6000000
+	u16* vidBuff = (u16*)BG_BMP_RAM(0);
+
 	//Display Mode 5 gives you 4 2d backgrounds to work with.
-	videoSetMode(MODE_5_2D);
+	//Set background 3 to active to display the bitmapped stars
+	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 
-	//The scroll values for the background
-	s16 scrollX = 64;
-	s16 scrollY = 128;
 
-	//The scale for the background
-	s16 scaleX = 1 << 8;
-	s16 scaleY = 1 << 8;
-
-	//I tried increasing the scale of the background but I'm pretty sure this doesn't do anything
-	scaleX -= 100;
-	scaleY -= 100;
-
-	//this is the screen pixel that the image will rotate about
-	s16 rcX = 128;
-	s16 rcY = 96;
-	
 	//Store the sprite tiles in VRAM A
 	vramSetBankA(VRAM_A_MAIN_SPRITE);
 
@@ -88,9 +163,11 @@ int main(void){
 	u16* gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32,SpriteColorFormat_256Color);//make room for the sprite
 	u16* gfx2 = oamAllocateGfx(&oamMain, SpriteSize_32x32,SpriteColorFormat_256Color);//make room for the sprite
 
+
 	// Copy the sprites into the allocated room
 	dmaCopy(shipTiles, gfx, shipTilesLen);
 	dmaCopy(barrelTiles, gfx2, barrelTilesLen);
+
 
 	// This enables the use of the sub screen
 	consoleDemoInit();
@@ -105,19 +182,27 @@ int main(void){
 
 	//Give the barrel a random Y value within the screen
 	barrel.y = generateBarrelY();
+	barrel2.y = generateBarrelY();
+	barrel3.y = generateBarrelY();
 
-	//Set the background
- 	vramSetBankA(VRAM_A_MAIN_BG);
+	//Offset the barrel's x position
+	barrel.x = 300;
+	barrel2.x = 350;
 
-	//Initialize and store the background information in VRAM_A_MAIN_BG
-	int bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
-	dmaCopy(starfieldTiles, bgGetGfxPtr(bg3), 256*256);
-	dmaCopy(starfieldPal, BG_PALETTE, 256*2);
+		//Setup BG3 to be the bitmapped representation of VRAM_A
+	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);	
+	BG3_CR = BG_BMP16_256x256 | BG_BMP_BASE(0);
 
-	//Set the values of background that don't change
-	bgSetCenter(bg3, rcX, rcY);
-	bgSetRotateScale(bg3, 0, scaleX, scaleY);
-	bgSetPriority(bg3, 3);
+	BG3_XDX = 1 << 8;
+	BG3_XDY = 0 ;
+	BG3_YDX = 0;
+	BG3_YDY = 1 << 8;
+
+	//Clear the screen and initialize the background star pixels
+	ClearScreen(vidBuff);
+	InitStars();
+	
+
 
     while(1) {
 		//increment score
@@ -128,12 +213,26 @@ int main(void){
 
 		//fly the barrel towards the player
 		barrel.x -= 1;
+		barrel2.x -= 1;
+		barrel3.x -= 1;
+
 		
 		//If the barrel hits the left side, generate a new Y value and reset the X position of the barrel
 		if(barrel.x < -10){
 			barrel.y = generateBarrelY();
 			barrel.x = 256;
 		}
+
+		if(barrel2.x < -10){
+			barrel2.y = generateBarrelY();
+			barrel2.x = 256;
+		}
+
+		if(barrel3.x < -10){
+			barrel3.y = generateBarrelY();
+			barrel3.x = 256;
+		}
+
 
 
 		//Player Controls
@@ -142,15 +241,9 @@ int main(void){
 
 		if(held & KEY_DOWN && ship.y < 165)
 			ship.y += 1;
-
-		// Background Scrolling
-		// I'm aware this looks really janky
-		scrollX++;
-		if(scrollX > 150)
-			scrollX = 64;
 		
 		//Check for a barrel to ship collision
-		if(checkCollision(&ship, &barrel)){
+		if(checkCollision(&ship, &barrel) || checkCollision(&ship, &barrel2) || checkCollision(&ship, &barrel3)){
 			//Display the you lose screen
 			while(1){
 				scanKeys();
@@ -168,7 +261,12 @@ int main(void){
 					score = 0;
 					//Reset the barrel
 					barrel.y = generateBarrelY();
-					barrel.x = 256;
+					barrel2.y = generateBarrelY();
+					barrel3.y = generateBarrelY();
+					barrel.x = 300;
+					barrel2.x = 350;
+					barrel3.x = 256;
+
 					//Continue the new game
 					break;
 				}
@@ -179,10 +277,6 @@ int main(void){
 		//Prints the score
 		iprintf("\x1b[10;0HScore = %d", score);
 
-		//Sets the new scroll of the background and updates the background
-		bgSetScroll(bg3, scrollX, scrollY);
-		bgUpdate();
-
 		//Display the two sprites on the main screen. Figuring out how to store both palettes separately took me a while.
 		oamSet(&oamMain, 0, ship.x, ship.y, 1, 0, SpriteSize_32x32, SpriteColorFormat_256Color, 
 			gfx, 0, false, false, false, false, false);
@@ -190,8 +284,18 @@ int main(void){
 		oamSet(&oamMain, 1, barrel.x, barrel.y, 0, 1, SpriteSize_32x32, SpriteColorFormat_256Color, 
 			gfx2, 0, false, false, false, false, false);
 
+		oamSet(&oamMain, 2, barrel2.x, barrel2.y, 0, 1, SpriteSize_32x32, SpriteColorFormat_256Color, 
+			gfx2, 0, false, false, false, false, false);
 
+		oamSet(&oamMain, 3, barrel3.x, barrel3.y, 0, 1, SpriteSize_32x32, SpriteColorFormat_256Color, 
+			gfx2, 0, false, false, false, false, false);
 
+		for(i = 0; i < NUM_STARS; i++)
+		{
+			EraseStar(&stars[i], vidBuff);
+			MoveStar(&stars[i]);
+			DrawStar(&stars[i], vidBuff);
+		}
 
 		swiWaitForVBlank();
 
